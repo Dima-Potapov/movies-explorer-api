@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
+
 const cors = require('cors');
 const {
   errors,
@@ -8,13 +10,14 @@ const {
 const { errorHandler } = require('./middlewares/errorsHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const router = require('./routes/index');
+const limiter = require('./utils/rateLimit');
 
-const { PORT = 3001 } = process.env;
+const { PORT = 3001, MONGODB_URL = 'mongodb://localhost:27017/bitfilmsdb' } = process.env;
 
 const app = express();
 
 mongoose.set('strictQuery', false);
-mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
+mongoose.connect(MONGODB_URL, {
   useUnifiedTopology: true,
   useNewUrlParser: true,
 });
@@ -28,6 +31,8 @@ const corsOptions = {
   credentials: true,
 };
 
+app.use(limiter);
+app.use(helmet());
 app.use(cors(corsOptions));
 // app.use((req, res, next) => {
 //   const { origin } = req.headers;

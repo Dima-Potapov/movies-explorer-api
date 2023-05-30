@@ -46,23 +46,23 @@ const cardSchema = new mongoose.Schema({
       message: 'Неправильный формат Url',
     },
   },
-  owner: [{
+  owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
     required: true,
-  }],
-  movieId: [{
+  },
+  movieId: {
+    type: Number,
+    required: true,
+  },
+  nameRU: {
     type: String,
     required: true,
-  }],
-  nameRU: [{
+  },
+  nameEN: {
     type: String,
     required: true,
-  }],
-  nameEN: [{
-    type: String,
-    required: true,
-  }],
+  },
 });
 
 module.exports = mongoose.model('movie', cardSchema);

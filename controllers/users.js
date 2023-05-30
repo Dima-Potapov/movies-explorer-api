@@ -2,10 +2,13 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
-const NotFoundError = require('../errors/notFoundError');
 const NotValidError = require('../errors/notValidError');
 const ConflictError = require('../errors/conflictError');
 const UnauthorizedError = require('../errors/unauthorizedError');
+const {
+  notFoundUser, notValidDataCreateUser, uniqueEmailCreateUser, uniqueEmailPatchUser,
+  notValidDataPatchUser, notValidForLogin,
+} = require('../utils/errorMessages');
 
 require('dotenv')
   .config();
@@ -19,7 +22,7 @@ const getAuthUser = (req, res, next) => {
     .then((user) => res.status(200)
       .send(user))
     .catch((error) => {
-      if (error.name === 'CastError') return next(new NotFoundError('Пользователь по указанному _id не найден'));
+      if (error.name === 'CastError') return next(new NotValidError(notFoundUser));
 
       next(next);
     });
@@ -48,8 +51,8 @@ const createUser = (req, res, next) => {
         email: user.email,
       }))
     .catch((error) => {
-      if (error.name === 'ValidationError') return next(new NotValidError('Переданы некорректные данные при создании пользователя'));
-      if (error.code === 11000) return next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
+      if (error.name === 'ValidationError') return next(new NotValidError(notValidDataCreateUser));
+      if (error.code === 11000) return next(new ConflictError(uniqueEmailCreateUser));
 
       next(error);
     });
@@ -77,31 +80,9 @@ const updateUser = (req, res, next) => {
     .then((user) => res.status(200)
       .send(user))
     .catch((error) => {
-      if (error.name === 'CastError') return next(new NotFoundError('Пользователь по указанному _id не найден'));
-      if (error.name === 'ValidationError') return next(new NotValidError('Переданы некорректные данные при обновлении профиля'));
-
-      next(error);
-    });
-};
-
-const updateAvatarUser = (req, res, next) => {
-  const { avatar } = req.body;
-  const { _id: userId } = req.user;
-
-  User.findByIdAndUpdate(
-    userId,
-    { avatar },
-    {
-      new: true,
-      runValidators: true,
-      upsert: false,
-    },
-  )
-    .then((user) => res.status(200)
-      .send(user))
-    .catch((error) => {
-      if (error.name === 'CastError') return next(new NotFoundError('Пользователь по указанному _id не найден'));
-      if (error.name === 'ValidationError') return next(new NotValidError('Переданы некорректные данные при обновлении аватара'));
+      if (error.codeName === 'DuplicateKey') return next(new NotValidError(uniqueEmailPatchUser));
+      if (error.name === 'CastError') return next(new NotValidError(notFoundUser));
+      if (error.name === 'ValidationError') return next(new NotValidError(notValidDataPatchUser));
 
       next(error);
     });
@@ -116,11 +97,11 @@ const login = (req, res, next) => {
   User.findOne({ email })
     .select('+password')
     .then((user) => {
-      if (!user) throw new UnauthorizedError('Неправильные почта или пароль');
+      if (!user) throw new UnauthorizedError(notValidForLogin);
 
       return bcrypt.compare(password, user.password)
         .then((matched) => {
-          if (!user || !matched) throw new UnauthorizedError('Неправильные почта или пароль');
+          if (!user || !matched) throw new UnauthorizedError(notValidForLogin);
 
           const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
 
@@ -150,7 +131,6 @@ module.exports = {
   getAuthUser,
   createUser,
   updateUser,
-  updateAvatarUser,
   login,
   signOut,
   successfulAuth,

@@ -2,6 +2,7 @@ const Movie = require('../models/movie');
 const NotFoundError = require('../errors/notFoundError');
 const ForbiddenError = require('../errors/forbiddenError');
 const NotValidError = require('../errors/notValidError');
+const { notValidDataCreateMovie, notFoundMovie, notRemoveAlienMovie } = require('../utils/errorMessages');
 
 const createMovie = (req, res, next) => {
   const {
@@ -35,7 +36,7 @@ const createMovie = (req, res, next) => {
     .then((movie) => res.status(201)
       .send(movie))
     .catch((error) => {
-      if (error.name === 'ValidationError') return next(new NotValidError('Переданы некорректные данные при создании карточки'));
+      if (error.name === 'ValidationError') return next(new NotValidError(notValidDataCreateMovie));
 
       next(error);
     });
@@ -53,8 +54,8 @@ const deleteMovieById = (req, res, next) => {
   Movie.findById(movieId)
     .populate('owner')
     .then((movie) => {
-      if (!movie) throw new NotFoundError('Карточка с указанным _id не найдена');
-      if (!movie.owner[0].equals(req.user._id)) throw new ForbiddenError('Нельзя удалить чужую карточку');
+      if (!movie) throw new NotFoundError(notFoundMovie);
+      if (!movie.owner.equals(req.user._id)) throw new ForbiddenError(notRemoveAlienMovie);
 
       Movie.findByIdAndDelete(movie._id)
         .then((removedMovie) => res.status(200)

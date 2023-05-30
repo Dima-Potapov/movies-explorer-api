@@ -1,7 +1,8 @@
-[![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)
-# Проект Mesto фронтенд + бэкенд
+# Проект бэкенд
 
 Ссылка на репозиторий: https://github.com/Dima-Potapov/movies-explorer-api
+
+Ссылка для использования: https://dima.potapov.nomoredomains.rocks/api/
 
 ## Директории
 

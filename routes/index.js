@@ -21,10 +21,7 @@ router.delete('/signout', auth, signOut);
 router.use('/users', auth, userRoutes);
 router.use('/movies', auth, movieRoutes);
 
-router.use('/', (req, res, next) => {
-  console.log('---' + req.url + '---');
-  return next();
-},auth, () => {
+router.use('/', auth, () => {
   throw new NotFoundError(pageNotFount);
 });
 

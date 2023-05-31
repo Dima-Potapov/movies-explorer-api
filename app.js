@@ -12,7 +12,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const router = require('./routes/index');
 const limiter = require('./utils/rateLimit');
 
-const { PORT = 3001, MONGODB_URL = 'mongodb://localhost:27017/bitfilmsdb' } = process.env;
+const { PORT = 3001, MONGODB_URL } = process.env;
 
 const app = express();
 
@@ -31,7 +31,7 @@ const corsOptions = {
   credentials: true,
 };
 
-app.use(limiter);
+app.use(requestLogger);
 app.use(helmet());
 app.use(cors(corsOptions));
 // app.use((req, res, next) => {
@@ -43,16 +43,14 @@ app.use(cors(corsOptions));
 //
 //   next();
 // });
+app.use(limiter);
 
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(requestLogger);
-
 app.use(router);
 
 app.use(errorLogger);
-
 app.use(errors());
 app.use(errorHandler);
 

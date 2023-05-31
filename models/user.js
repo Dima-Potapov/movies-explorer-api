@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose');
 const isEmail = require('validator/lib/isEmail');
+const { notValidEmail } = require('../utils/errorMessages');
 
 const userSchema = new Schema({
   name: {
@@ -13,7 +14,7 @@ const userSchema = new Schema({
     unique: true,
     validator: {
       validator: (v) => isEmail(v),
-      message: 'Неправильный формат Email',
+      message: notValidEmail,
     },
     required: true,
   },

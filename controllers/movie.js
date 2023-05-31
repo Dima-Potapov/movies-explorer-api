@@ -49,9 +49,9 @@ const getMovies = (req, res, next) => {
 };
 
 const deleteMovieById = (req, res, next) => {
-  const { movieId } = req.params;
+  const { id } = req.params;
 
-  Movie.findById(movieId)
+  Movie.findById(id)
     .populate('owner')
     .then((movie) => {
       if (!movie) throw new NotFoundError(notFoundMovie);

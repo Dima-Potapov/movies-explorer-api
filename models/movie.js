@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { linkRegex } = require('../utils/regexTemplates');
+const { notValidUrl } = require('../utils/errorMessages');
 
 const cardSchema = new mongoose.Schema({
   country: {
@@ -27,7 +28,7 @@ const cardSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (v) => linkRegex.test(v),
-      message: 'Неправильный формат Url',
+      message: notValidUrl,
     },
   },
   trailerLink: {
@@ -35,7 +36,7 @@ const cardSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (v) => linkRegex.test(v),
-      message: 'Неправильный формат Url',
+      message: notValidUrl,
     },
   },
   thumbnail: {
@@ -43,7 +44,7 @@ const cardSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (v) => linkRegex.test(v),
-      message: 'Неправильный формат Url',
+      message: notValidUrl,
     },
   },
   owner: {

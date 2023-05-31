@@ -13,6 +13,11 @@ const needAuth = 'Необходима авторизация';
 const errorAuth = 'Авторизация не пройдена';
 
 const pageNotFount = 'Страница не найдена';
+const serverError = 'На сервере произошла ошибка';
+
+const notValidUrl = 'Неправильный формат Url';
+const notValidEmail = 'Неправильный формат Email';
+
 module.exports = {
   notValidDataCreateMovie,
   notFoundMovie,
@@ -26,4 +31,7 @@ module.exports = {
   needAuth,
   errorAuth,
   pageNotFount,
+  serverError,
+  notValidUrl,
+  notValidEmail,
 };

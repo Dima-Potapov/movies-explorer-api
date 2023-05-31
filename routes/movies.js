@@ -9,6 +9,6 @@ const { validCreateMovie, deleteMovie } = require('../utils/validDataRequest');
 
 router.get('/', getMovies);
 router.post('/', validCreateMovie, createMovie);
-router.delete('/:movieId', deleteMovie, deleteMovieById);
+router.delete('/:id', deleteMovie, deleteMovieById);
 
 module.exports = router;

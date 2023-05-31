@@ -6,7 +6,7 @@ const NotValidError = require('../errors/notValidError');
 const ConflictError = require('../errors/conflictError');
 const UnauthorizedError = require('../errors/unauthorizedError');
 const {
-  notFoundUser, notValidDataCreateUser, uniqueEmailCreateUser, uniqueEmailPatchUser,
+  notValidDataCreateUser, uniqueEmailCreateUser, uniqueEmailPatchUser,
   notValidDataPatchUser, notValidForLogin,
 } = require('../utils/errorMessages');
 
@@ -15,17 +15,8 @@ require('dotenv')
 
 const { JWT_SECRET = 'dev-secret' } = process.env;
 
-const getAuthUser = (req, res, next) => {
-  const { _id: userId } = req.user;
-
-  User.findById(userId)
-    .then((user) => res.status(200)
-      .send(user))
-    .catch((error) => {
-      if (error.name === 'CastError') return next(new NotValidError(notFoundUser));
-
-      next(next);
-    });
+const getAuthUser = (req, res) => {
+  res.status(200).send(req.user);
 };
 
 const createUser = (req, res, next) => {
@@ -80,8 +71,8 @@ const updateUser = (req, res, next) => {
     .then((user) => res.status(200)
       .send(user))
     .catch((error) => {
-      if (error.codeName === 'DuplicateKey') return next(new NotValidError(uniqueEmailPatchUser));
-      if (error.name === 'CastError') return next(new NotValidError(notFoundUser));
+      if (error.codeName === 'DuplicateKey') return next(new ConflictError(uniqueEmailPatchUser));
+      if (error.name === 'CastError') return next(new NotValidError(notValidDataPatchUser));
       if (error.name === 'ValidationError') return next(new NotValidError(notValidDataPatchUser));
 
       next(error);

@@ -7,17 +7,21 @@ require('dotenv')
 
 const { JWT_SECRET = 'dev-secret' } = process.env;
 
+const extractBearerToken = (header) => header.replace('Bearer ', '');
+
 module.exports = (req, res, next) => {
-  const jwtKey = req.cookies.jwt;
+  const { authorization } = req.headers;
 
-  if (!jwtKey) throw new UnauthorizedError(needAuth);
+  if (!authorization || !authorization.startsWith('Bearer ')) {
+    throw new UnauthorizedError(needAuth);
+  }
 
-  let payload;
+  const token = extractBearerToken(authorization);
 
   try {
-    payload = jwt.verify(jwtKey, JWT_SECRET);
+    const payloadToken = jwt.verify(token, JWT_SECRET);
 
-    User.findById(payload._id)
+    User.findById(payloadToken._id)
       .then((user) => {
         req.user = user;
 

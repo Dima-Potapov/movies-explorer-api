@@ -94,17 +94,11 @@ const login = (req, res, next) => {
         .then((matched) => {
           if (!user || !matched) throw new UnauthorizedError(notValidForLogin);
 
-          const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
-
           res
-            .cookie('jwt', token, {
-              maxAge: 604800,
-              httpOnly: true,
-              sameSite: true,
-            })
             .status(200)
-            .send({ message: 'Авторизация прошла успешно!' })
-            .end();
+            .send({
+              token: jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' }),
+            });
         });
     })
     .catch(next);

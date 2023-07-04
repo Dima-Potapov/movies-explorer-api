@@ -31,7 +31,7 @@ const cardSchema = new mongoose.Schema({
       message: notValidUrl,
     },
   },
-  trailerLink: {
+  trailer: {
     type: String,
     required: true,
     validate: {

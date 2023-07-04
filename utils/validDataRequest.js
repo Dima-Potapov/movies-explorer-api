@@ -25,7 +25,7 @@ const validCreateMovie = celebrate({
         .string()
         .required()
         .uri(),
-      trailerLink: Joi
+      trailer: Joi
         .string()
         .required()
         .uri(),
